@@ -16,6 +16,7 @@ data class User(
     var verified: Boolean = false,
     var verificationCode: String = "",
     var createdAt: Long = System.currentTimeMillis(),
+    var avatar: String = "",
     var messagesSent: Int = 0,
     var upvotesReceived: Int = 0,
     var downvotesReceived: Int = 0,

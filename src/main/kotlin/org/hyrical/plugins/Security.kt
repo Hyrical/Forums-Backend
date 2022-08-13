@@ -1,6 +1,7 @@
 package org.hyrical.plugins
 
 import io.ktor.http.*
+import io.ktor.http.ContentType.Application.Json
 import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.sessions.*
 import io.ktor.server.application.*
@@ -9,6 +10,7 @@ import io.ktor.server.response.*
 import io.ktor.server.request.*
 import io.ktor.server.routing.*
 import io.ktor.util.*
+import kotlinx.serialization.json.Json
 import org.hyrical.respond
 import org.hyrical.users.User
 import org.hyrical.users.UserSession
@@ -31,7 +33,10 @@ fun Application.configureSecurity() {
     }
 
     install(ContentNegotiation) {
-        json()
+        json(Json {
+            prettyPrint = true
+            isLenient = true
+        })
     }
 
     routing {
@@ -70,9 +75,11 @@ fun Application.configureSecurity() {
                     return@post
                 }
 
-                call.sessions.set(UserSession(
-                    user.id.toString()
-                ))
+                call.sessions.set(
+                    UserSession(
+                        user.id.toString()
+                    )
+                )
 
                 respond(call, true, "Logged in")
             }
@@ -87,12 +94,12 @@ fun Application.configureSecurity() {
                 respond(call, true, "Logged out")
             }
 
-            post("delete") {
+            delete("delete") {
                 val userSession = call.sessions.get<UserSession>()
 
                 if (userSession == null) {
                     respond(call, false, "You are not logged in")
-                    return@post
+                    return@delete
                 }
 
                 val user = userSession.getUser()
@@ -153,11 +160,69 @@ fun Application.configureSecurity() {
 
                 UserRepository.users.insertOne(user)
 
-                call.sessions.set(UserSession(
-                    user.id.toString()
-                ))
+                call.sessions.set(
+                    UserSession(
+                        user.id.toString()
+                    )
+                )
 
                 respond(call, true, code.toString())
+            }
+
+            route("update") {
+                post("username") {
+                    val userSession = call.sessions.get<UserSession>()
+
+                    if (userSession == null) {
+                        respond(call, false, "You are not logged in")
+                        return@post
+                    }
+
+                    val user = userSession.getUser()
+
+                    val username = call.parameters["username"]
+
+                    if (username == null) {
+                        respond(call, false, "Username is required")
+                        return@post
+                    }
+
+                    if (UserRepository.findByUsername(call.parameters["username"]!!) != null) {
+                        respond(call, false, "Another user already has that username")
+                        return@post
+                    }
+
+                    user.username = username
+
+                    UserRepository.users.updateOne(User::id eq user.id, User::username eq user.username)
+
+                    respond(call, true, "Username updated")
+                }
+
+
+                post("password") {
+                    val userSession = call.sessions.get<UserSession>()
+
+                    if (userSession == null) {
+                        respond(call, false, "You are not logged in")
+                        return@post
+                    }
+
+                    val user = userSession.getUser()
+
+                    val password = call.parameters["password"]
+
+                    if (password == null) {
+                        respond(call, false, "Password is required")
+                        return@post
+                    }
+
+                    user.password = HashUtils.hash(password)
+
+                    UserRepository.users.updateOne(User::id eq user.id, User::password eq user.password)
+
+                    respond(call, true, "Password updated")
+                }
             }
         }
     }

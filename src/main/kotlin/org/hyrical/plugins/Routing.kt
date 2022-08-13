@@ -13,12 +13,14 @@ import org.hyrical.forums.repository.ForumRepository
 @OptIn(KtorExperimentalLocationsAPI::class)
 fun Application.configureRouting() {
 
+    @kotlinx.serialization.Serializable
     data class MofifiedForum(
         var id: String,
         var name: String,
         var description: String,
         var isRestricted: Boolean,
         var category: Forum.Category,
+        var comments: List<Post>,
 
         var recentPost: Post? = null
     )
@@ -38,11 +40,12 @@ fun Application.configureRouting() {
                     description = forum.description,
                     isRestricted = forum.isRestricted,
                     category = forum.category,
-                    recentPost = forum.recentPost
+                    recentPost = forum.recentPost,
+                    comments = forum.posts
                 ))
             }
 
-            call.respond("Forum: $modifiedForums")
+            call.respond(modifiedForums.first())
         }
 
         get("/api/forum/{forumName}") {
