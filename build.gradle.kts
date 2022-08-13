@@ -12,7 +12,7 @@ plugins {
 }
 
 group = "org.hyrical"
-version = "0.0.1"
+version = "0.0.1"test
 application {
     mainClass.set("org.hyrical.ApplicationKt")
 
