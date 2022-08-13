@@ -1,7 +1,10 @@
 package org.hyrical
 
+import io.ktor.http.*
+import io.ktor.server.application.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
+import io.ktor.server.response.*
 import org.hyrical.forums.Forum
 import org.hyrical.plugins.*
 import org.hyrical.users.User
@@ -30,4 +33,14 @@ fun main() {
         configureMonitoring()
         configureRouting()
     }.start(wait = true)
+}
+
+suspend fun respond(call: ApplicationCall, success: Boolean, message: String) {
+    call.respond(
+        if (success) HttpStatusCode.Accepted else HttpStatusCode.BadRequest,
+        mapOf(
+            "success" to success.toString(),
+            "message" to message
+        )
+    )
 }

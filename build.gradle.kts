@@ -34,8 +34,12 @@ dependencies {
     implementation("ch.qos.logback:logback-classic:$logback_version")
     testImplementation("io.ktor:ktor-server-tests-jvm:$ktor_version")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
+    implementation("io.ktor:ktor-serialization-kotlinx-json-jvm:$ktor_version")
+    implementation("io.ktor:ktor-server-content-negotiation-jvm:$ktor_version")
 
     implementation("org.litote.kmongo:kmongo-serialization:4.6.0")
+// https://mvnrepository.com/artifact/com.google.guava/guava
+    implementation("com.google.guava:guava:31.1-jre")
 
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.3")
 }
