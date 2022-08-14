@@ -1,14 +1,11 @@
-package org.hyrical.plugins
+package org.hyrical.users.endpoints
 
-import io.ktor.http.*
-import io.ktor.http.ContentType.Application.Json
 import io.ktor.serialization.kotlinx.json.*
-import io.ktor.server.sessions.*
 import io.ktor.server.application.*
 import io.ktor.server.plugins.contentnegotiation.*
-import io.ktor.server.response.*
 import io.ktor.server.request.*
 import io.ktor.server.routing.*
+import io.ktor.server.sessions.*
 import io.ktor.util.*
 import kotlinx.serialization.json.Json
 import org.hyrical.respond
@@ -17,11 +14,8 @@ import org.hyrical.users.UserSession
 import org.hyrical.users.repository.UserRepository
 import org.hyrical.utils.HashUtils
 import org.litote.kmongo.eq
-import org.litote.kmongo.json
-import java.io.File
-import kotlin.random.Random
 
-fun Application.configureSecurity() {
+fun Application.createUserEndpoints() {
     val secretEncryptKey = hex("00112233445566778899aabbccddeeff")
     val secretSignKey = hex("6819b57a326945c1968f45236589")
     install(Sessions) {
@@ -40,7 +34,6 @@ fun Application.configureSecurity() {
     }
 
     routing {
-
         route("/api/users/") {
             post("login") {
 

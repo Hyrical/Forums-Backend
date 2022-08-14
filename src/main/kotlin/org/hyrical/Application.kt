@@ -5,33 +5,19 @@ import io.ktor.server.application.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
 import io.ktor.server.response.*
+import org.hyrical.communities.endpoints.createCommunityEndpoints
+import org.hyrical.communities.post.endpoints.createPostEndpoints
 import org.hyrical.forums.Forum
 import org.hyrical.plugins.*
 import org.hyrical.users.User
+import org.hyrical.users.endpoints.createUserEndpoints
 
 fun main() {
-    val user = User(
-        username = "Nopox",
-        email = "test@gmail.com",
-        password = "test"
-    )
-    user.save()
-    /*
-       val forum = Forum(
-           id = "test",
-           name = "Test",
-           description = "Test forum",
-           isRestricted = false,
-           category = Forum.Category.ANNOUNCEMENTS,
-           posts = mutableListOf(),
-       )
-
-       forum.save()
-        */
     embeddedServer(Netty, port = 8080, host = "127.0.0.1") {
-        configureSecurity()
         configureMonitoring()
-        configureRouting()
+
+        createUserEndpoints()
+        createCommunityEndpoints()
     }.start(wait = true)
 }
 

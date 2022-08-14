@@ -1,7 +1,6 @@
 package org.hyrical.users
 
 import kotlinx.serialization.Contextual
-import org.hyrical.forums.post.Post
 import org.hyrical.users.repository.UserRepository
 import org.litote.kmongo.eq
 import org.litote.kmongo.save
@@ -20,7 +19,8 @@ data class User(
     var messagesSent: Int = 0,
     var upvotesReceived: Int = 0,
     var downvotesReceived: Int = 0,
-    var profileComments: List<Post> = mutableListOf(),
+
+    var staff: Boolean = false
     ) {
     fun save() {
         UserRepository.users.save(this)
